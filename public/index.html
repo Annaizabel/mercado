@@ -6455,8 +6455,12 @@ function renderNotificacoes() {
   var html = '<div class="notif-channels">';
 
   // WhatsApp
-  html += '<div class="notif-channel-card">'+
-    '<div class="notif-channel-title">WhatsApp <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.67-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.076 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421-7.403h-.004a9.87 9.87 0 00-4.992 1.51c-1.528.824-2.83 1.993-3.824 3.41-.995 1.418-1.537 3.029-1.541 4.686v.05c.005 1.657.548 3.273 1.543 4.687.994 1.415 2.294 2.582 3.822 3.404a9.9 9.9 0 004.99 1.51h.05c4.521 0 8.201-3.602 8.201-8.043 0-2.141-.84-4.159-2.368-5.669-1.528-1.51-3.576-2.346-5.73-2.346h-.05z"/></svg></WhatsApp>'+
+  html += '<div class="notif-channel-card" style="padding:14px">'+
+    '<div class="notif-channel-title">WhatsApp 📱</div>'+
+    '<label style="display:flex;gap:8px;align-items:center;margin-bottom:10px"><input type="checkbox" '+(cfg.whatsapp.enabled?'checked':'')+' onchange="toggleNotifChannel('whatsapp',this.checked)" style="cursor:pointer"><span>Ativado</span></label>'+
+    '<div class="field" style="margin-bottom:8px"><label style="font-size:11px">Número (código país)</label><input type="text" value="'+escHtml(cfg.whatsapp.phoneNumber)+'" onchange="setNotifValue('whatsapp','phoneNumber',this.value)" placeholder="5585987654321" style="height:32px;width:100%;border:1px solid var(--line);border-radius:8px;padding:0 8px;font-size:12px"></div>'+
+    '<div class="field"><label style="font-size:11px">Chave API Twilio</label><input type="password" value="'+escHtml(cfg.whatsapp.apiKey)+'" onchange="setNotifValue('whatsapp','apiKey',this.value)" placeholder="sk_..." style="height:32px;width:100%;border:1px solid var(--line);border-radius:8px;padding:0 8px;font-size:12px"></div>'+
+  '</div>';
     '<label style="display:flex;gap:8px;align-items:center;margin-bottom:8px">'+
       '<input type="checkbox" '+(cfg.whatsapp.enabled?'checked':'')+' onchange="toggleNotifChannel(\'whatsapp\',this.checked)">'+
       '<span>Ativado</span>'+
@@ -6540,20 +6544,45 @@ function renderNotifRules() {
   var el = document.getElementById('notif-rules-panel');
   if (!el) return;
   var cfg = getNotifCfg();
+  if (!cfg || !cfg.rules) { el.innerHTML = '<p style="color:var(--ink3)">Erro ao carregar configurações</p>'; return; }
   
-  var html = '<div class="g2">';
+  var html = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">';
   
   // Estoque mínimo
-  html += '<div class="field"><label><input type="checkbox" '+(cfg.rules.estoqueMinimo.enabled?'checked':'')+' onchange="cfg=getNotifCfg(); cfg.rules.estoqueMinimo.enabled=this.checked; saveNotifCfg(cfg); renderNotifRules();"> Alertar estoque mínimo</label></div>';
+  html += '<div class="field" style="background:var(--bg2);padding:12px;border-radius:10px;border:1px solid var(--line)">'+
+    '<label style="display:flex;gap:8px;align-items:center;cursor:pointer;margin-bottom:8px">'+
+      '<input type="checkbox" '+(cfg.rules.estoqueMinimo.enabled?'checked':'')+' onchange="var cfg=getNotifCfg(); cfg.rules.estoqueMinimo.enabled=this.checked; saveNotifCfg(cfg); renderNotifRules();" style="cursor:pointer">'+
+      '<span style="font-weight:500">Estoque mínimo</span>'+
+    '</label>'+
+    '<p style="font-size:11px;color:var(--ink3);margin:0">Avisa quando produto atinge estoque mínimo</p>'+
+  '</div>';
   
-  // Boleto
-  html += '<div class="field"><label><input type="checkbox" '+(cfg.rules.boletoVencendo.enabled?'checked':'')+' onchange="cfg=getNotifCfg(); cfg.rules.boletoVencendo.enabled=this.checked; saveNotifCfg(cfg); renderNotifRules();"> Alertar boleto vencendo (em 3 dias)</label></div>';
+  // Boleto vencendo
+  html += '<div class="field" style="background:var(--bg2);padding:12px;border-radius:10px;border:1px solid var(--line)">'+
+    '<label style="display:flex;gap:8px;align-items:center;cursor:pointer;margin-bottom:8px">'+
+      '<input type="checkbox" '+(cfg.rules.boletoVencendo.enabled?'checked':'')+' onchange="var cfg=getNotifCfg(); cfg.rules.boletoVencendo.enabled=this.checked; saveNotifCfg(cfg); renderNotifRules();" style="cursor:pointer">'+
+      '<span style="font-weight:500">Boleto vencendo</span>'+
+    '</label>'+
+    '<p style="font-size:11px;color:var(--ink3);margin:0">Avisa 3 dias antes do vencimento</p>'+
+  '</div>';
   
-  // Margem
-  html += '<div class="field"><label>Margem mínima (%): <input type="number" value="'+(cfg.rules.margemBaixa.limitePercentual||20)+'" onchange="cfg=getNotifCfg(); cfg.rules.margemBaixa.limitePercentual=parseInt(this.value); saveNotifCfg(cfg);" style="width:80px"></label></div>';
+  // Margem baixa
+  html += '<div class="field" style="background:var(--bg2);padding:12px;border-radius:10px;border:1px solid var(--line)">'+
+    '<label style="display:flex;gap:8px;align-items:center;cursor:pointer;margin-bottom:8px">'+
+      '<input type="checkbox" '+(cfg.rules.margemBaixa.enabled?'checked':'')+' onchange="var cfg=getNotifCfg(); cfg.rules.margemBaixa.enabled=this.checked; saveNotifCfg(cfg); renderNotifRules();" style="cursor:pointer">'+
+      '<span style="font-weight:500">Margem baixa</span>'+
+    '</label>'+
+    '<div style="font-size:11px;margin-top:6px">Limite (%): <input type="number" value="'+(cfg.rules.margemBaixa.limitePercentual||20)+'" onchange="var cfg=getNotifCfg(); cfg.rules.margemBaixa.limitePercentual=parseInt(this.value)||20; saveNotifCfg(cfg);" style="height:28px;width:60px;border:1px solid var(--line);border-radius:6px;padding:0 6px"></div>'+
+  '</div>';
   
-  // Quebras
-  html += '<div class="field"><label>Quebras máximas (R$): <input type="number" value="'+(cfg.rules.quebrasExcessivas.limiteValor||500)+'" onchange="cfg=getNotifCfg(); cfg.rules.quebrasExcessivas.limiteValor=parseFloat(this.value); saveNotifCfg(cfg);" style="width:100px"></label></div>';
+  // Quebras excessivas
+  html += '<div class="field" style="background:var(--bg2);padding:12px;border-radius:10px;border:1px solid var(--line)">'+
+    '<label style="display:flex;gap:8px;align-items:center;cursor:pointer;margin-bottom:8px">'+
+      '<input type="checkbox" '+(cfg.rules.quebrasExcessivas.enabled?'checked':'')+' onchange="var cfg=getNotifCfg(); cfg.rules.quebrasExcessivas.enabled=this.checked; saveNotifCfg(cfg); renderNotifRules();" style="cursor:pointer">'+
+      '<span style="font-weight:500">Quebras excessivas</span>'+
+    '</label>'+
+    '<div style="font-size:11px;margin-top:6px">Limite (R$): <input type="number" value="'+(cfg.rules.quebrasExcessivas.limiteValor||500)+'" onchange="var cfg=getNotifCfg(); cfg.rules.quebrasExcessivas.limiteValor=parseFloat(this.value)||500; saveNotifCfg(cfg);" style="height:28px;width:80px;border:1px solid var(--line);border-radius:6px;padding:0 6px"></div>'+
+  '</div>';
   
   html += '</div>';
   el.innerHTML = html;
