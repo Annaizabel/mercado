@@ -1,0 +1,15 @@
+{
+  "name": "strelow-mercado",
+  "version": "1.0.0",
+  "description": "Solução integrada de gestão para mercados - Strelow Soluções",
+  "private": true,
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "echo 'Static HTML app'",
+    "start": "vercel dev"
+  },
+  "keywords": ["PDV", "mercado", "gestão", "estoque", "notificações"],
+  "author": "Strelow Soluções",
+  "license": "MIT",
+  "dependencies": {}
+}

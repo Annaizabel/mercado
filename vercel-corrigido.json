@@ -1,0 +1,36 @@
+{
+  "buildCommand": "echo 'Building static site'",
+  "outputDirectory": "public",
+  "framework": "static",
+  "functions": {
+    "api/**/*.js": {
+      "runtime": "nodejs18.x",
+      "memory": 512,
+      "timeout": 30
+    }
+  },
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        }
+      ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ],
+  "env": {
+    "TWILIO_ACCOUNT_SID": "@twilio_account_sid",
+    "TWILIO_AUTH_TOKEN": "@twilio_auth_token",
+    "TWILIO_PHONE_NUMBER": "@twilio_phone_number",
+    "RESEND_API_KEY": "@resend_api_key",
+    "TELEGRAM_BOT_TOKEN": "@telegram_bot_token"
+  }
+}
