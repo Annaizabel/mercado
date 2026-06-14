@@ -1582,6 +1582,8 @@ function show(id, el) {
   }, 50); }
   if (id === 't21') { setTimeout(function(){
     if(typeof renderNotificacoes==='function') renderNotificacoes();
+    if(typeof renderNotifRules==='function') renderNotifRules();
+    if(typeof renderNotifLog==='function') renderNotifLog();
   }, 50); }
   if (id === 't16') { setTimeout(function(){ if(typeof renderNotas==='function') renderNotas(); }, 50); }
   if (id === 't17') { setTimeout(function(){
@@ -6530,6 +6532,54 @@ function testNotifications() {
 // Executar checks periodicamente (a cada 30 min ou ao salvar)
 setInterval(function(){ if (typeof checkAndNotify === 'function') checkAndNotify(); }, 30*60*1000);
 
+
+
+
+// Renderiza painel de regras de alerta
+function renderNotifRules() {
+  var el = document.getElementById('notif-rules-panel');
+  if (!el) return;
+  var cfg = getNotifCfg();
+  
+  var html = '<div class="g2">';
+  
+  // Estoque mínimo
+  html += '<div class="field"><label><input type="checkbox" '+(cfg.rules.estoqueMinimo.enabled?'checked':'')+' onchange="cfg=getNotifCfg(); cfg.rules.estoqueMinimo.enabled=this.checked; saveNotifCfg(cfg); renderNotifRules();"> Alertar estoque mínimo</label></div>';
+  
+  // Boleto
+  html += '<div class="field"><label><input type="checkbox" '+(cfg.rules.boletoVencendo.enabled?'checked':'')+' onchange="cfg=getNotifCfg(); cfg.rules.boletoVencendo.enabled=this.checked; saveNotifCfg(cfg); renderNotifRules();"> Alertar boleto vencendo (em 3 dias)</label></div>';
+  
+  // Margem
+  html += '<div class="field"><label>Margem mínima (%): <input type="number" value="'+(cfg.rules.margemBaixa.limitePercentual||20)+'" onchange="cfg=getNotifCfg(); cfg.rules.margemBaixa.limitePercentual=parseInt(this.value); saveNotifCfg(cfg);" style="width:80px"></label></div>';
+  
+  // Quebras
+  html += '<div class="field"><label>Quebras máximas (R$): <input type="number" value="'+(cfg.rules.quebrasExcessivas.limiteValor||500)+'" onchange="cfg=getNotifCfg(); cfg.rules.quebrasExcessivas.limiteValor=parseFloat(this.value); saveNotifCfg(cfg);" style="width:100px"></label></div>';
+  
+  html += '</div>';
+  el.innerHTML = html;
+}
+
+// Renderiza histórico de notificações
+function renderNotifLog() {
+  var el = document.getElementById('notif-log-panel');
+  if (!el) return;
+  
+  var log = getNotifLog();
+  if (log.length === 0) {
+    el.innerHTML = '<p style="font-size:12px;color:var(--ink3)">Nenhuma notificação enviada ainda. Elas aparecerão aqui quando forem disparadas.</p>';
+    return;
+  }
+  
+  var html = '<table style="width:100%;font-size:11px;border-collapse:collapse">';
+  html += '<tr style="border-bottom:1px solid var(--line)"><th style="text-align:left;padding:6px">Hora</th><th style="text-align:left;padding:6px">Tipo</th><th style="text-align:left;padding:6px">Canal</th><th style="text-align:left;padding:6px">Status</th></tr>';
+  
+  log.slice(-20).reverse().forEach(function(item){
+    html += '<tr style="border-bottom:1px solid var(--line)"><td style="padding:6px">'+escHtml(item.timestamp||'')+'</td><td style="padding:6px">'+escHtml(item.tipo||'')+'</td><td style="padding:6px">'+escHtml(item.destinatario||'-')+'</td><td style="padding:6px">'+(item.status==='ok'?'✓ Enviado':'✗ Erro')+'</td></tr>';
+  });
+  
+  html += '</table>';
+  el.innerHTML = html;
+}
 
 </script>
 
