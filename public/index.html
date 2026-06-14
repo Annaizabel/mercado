@@ -6489,6 +6489,64 @@ setInterval(function(){ if (typeof checkAndNotify === 'function') checkAndNotify
 // NOTIFICAÇÕES - Versão corrigida
 // ═══════════════════════════════════════════════════════
 
+
+// ═══════════════════════════════════════════════════════
+// FUNÇÕES DE NOTIFICAÇÃO - CONFIG & STORAGE
+// ═══════════════════════════════════════════════════════
+
+function getNotifCfg() {
+  try {
+    var cfg = JSON.parse(localStorage.getItem('kit_notif_cfg_v1') || '{}');
+    // Garante estrutura padrão
+    if (!cfg.whatsapp) cfg.whatsapp = { enabled: false, phoneNumber: '', apiKey: '' };
+    if (!cfg.email) cfg.email = { enabled: false, to: '' };
+    if (!cfg.telegram) cfg.telegram = { enabled: false, chatId: '', botToken: '' };
+    if (!cfg.rules) cfg.rules = {
+      estoqueMinimo: { enabled: false },
+      boletoVencendo: { enabled: false },
+      margemBaixa: { enabled: false, limitePercentual: 20 },
+      quebrasExcessivas: { enabled: false, limiteValor: 500 }
+    };
+    return cfg;
+  } catch(e) {
+    console.error('Erro ao carregar config notif:', e);
+    return {};
+  }
+}
+
+function saveNotifCfg(cfg) {
+  try {
+    localStorage.setItem('kit_notif_cfg_v1', JSON.stringify(cfg));
+    return true;
+  } catch(e) {
+    console.error('Erro ao salvar config notif:', e);
+    return false;
+  }
+}
+
+function getNotifLog() {
+  try {
+    return JSON.parse(localStorage.getItem('kit_notif_log_v1') || '[]');
+  } catch(e) {
+    return [];
+  }
+}
+
+function addNotifLog(item) {
+  try {
+    var log = getNotifLog();
+    log.push({
+      timestamp: new Date().toLocaleString('pt-BR'),
+      tipo: item.tipo || 'Notificação',
+      destinatario: item.destinatario || '',
+      status: item.status || 'ok'
+    });
+    localStorage.setItem('kit_notif_log_v1', JSON.stringify(log));
+  } catch(e) {
+    console.error('Erro ao adicionar log:', e);
+  }
+}
+
 function renderNotificacoes() {
   var el = document.getElementById('notif-config-panel');
   if (!el) return;
