@@ -6447,69 +6447,7 @@ function sendTelegram(msg, cfg) {
 
 // ── UI: Painel de configuração de notificações ──
 
-function renderNotificacoes() {
-  var el = document.getElementById('notif-config-panel');
-  if (!el) return;
-  var cfg = getNotifCfg();
 
-  var html = '<div class="notif-channels">';
-
-  // WhatsApp
-  html += '<div class="notif-channel-card" style="padding:14px">'+
-    '<div class="notif-channel-title">WhatsApp 📱</div>'+
-    '<label style="display:flex;gap:8px;align-items:center;margin-bottom:10px"><input type="checkbox" '+(cfg.whatsapp.enabled?'checked':'')+' onchange="toggleNotifChannel('whatsapp',this.checked)" style="cursor:pointer"><span>Ativado</span></label>'+
-    '<div class="field" style="margin-bottom:8px"><label style="font-size:11px">Número (código país)</label><input type="text" value="'+escHtml(cfg.whatsapp.phoneNumber)+'" onchange="setNotifValue('whatsapp','phoneNumber',this.value)" placeholder="5585987654321" style="height:32px;width:100%;border:1px solid var(--line);border-radius:8px;padding:0 8px;font-size:12px"></div>'+
-    '<div class="field"><label style="font-size:11px">Chave API Twilio</label><input type="password" value="'+escHtml(cfg.whatsapp.apiKey)+'" onchange="setNotifValue('whatsapp','apiKey',this.value)" placeholder="sk_..." style="height:32px;width:100%;border:1px solid var(--line);border-radius:8px;padding:0 8px;font-size:12px"></div>'+
-  '</div>';
-    '<label style="display:flex;gap:8px;align-items:center;margin-bottom:8px">'+
-      '<input type="checkbox" '+(cfg.whatsapp.enabled?'checked':'')+' onchange="toggleNotifChannel(\'whatsapp\',this.checked)">'+
-      '<span>Ativado</span>'+
-    '</label>'+
-    '<div class="field">'+
-      '<label>Número (com código país, ex: 5585987654321)</label>'+
-      '<input type="text" value="'+escHtml(cfg.whatsapp.phoneNumber)+'" onchange="setNotifValue(\'whatsapp\',\'phoneNumber\',this.value)" placeholder="+55 85 9 8765-4321" style="width:100%;height:36px;border:1px solid var(--line);border-radius:8px;padding:0 10px;font-size:13px">'+
-    '</div>'+
-    '<div class="field">'+
-      '<label>Chave API (Twilio/Baileys)</label>'+
-      '<input type="password" value="'+escHtml(cfg.whatsapp.apiKey)+'" onchange="setNotifValue(\'whatsapp\',\'apiKey\',this.value)" placeholder="sk_..." style="width:100%;height:36px;border:1px solid var(--line);border-radius:8px;padding:0 10px;font-size:13px">'+
-    '</div>'+
-  '</div>';
-
-  // Email
-  html += '<div class="notif-channel-card">'+
-    '<div class="notif-channel-title">E-mail 📧</div>'+
-    '<label style="display:flex;gap:8px;align-items:center;margin-bottom:8px">'+
-      '<input type="checkbox" '+(cfg.email.enabled?'checked':'')+' onchange="toggleNotifChannel(\'email\',this.checked)">'+
-      '<span>Ativado</span>'+
-    '</label>'+
-    '<div class="field">'+
-      '<label>E-mail para receber alertas</label>'+
-      '<input type="email" value="'+escHtml(cfg.email.to)+'" onchange="setNotifValue(\'email\',\'to\',this.value)" placeholder="seu@email.com" style="width:100%;height:36px;border:1px solid var(--line);border-radius:8px;padding:0 10px;font-size:13px">'+
-    '</div>'+
-  '</div>';
-
-  // Telegram
-  html += '<div class="notif-channel-card">'+
-    '<div class="notif-channel-title">Telegram ✈️</div>'+
-    '<label style="display:flex;gap:8px;align-items:center;margin-bottom:8px">'+
-      '<input type="checkbox" '+(cfg.telegram.enabled?'checked':'')+' onchange="toggleNotifChannel(\'telegram\',this.checked)">'+
-      '<span>Ativado</span>'+
-    '</label>'+
-    '<div class="field">'+
-      '<label>Chat ID (seu ID privado ou grupo)</label>'+
-      '<input type="text" value="'+escHtml(cfg.telegram.chatId)+'" onchange="setNotifValue(\'telegram\',\'chatId\',this.value)" placeholder="123456789" style="width:100%;height:36px;border:1px solid var(--line);border-radius:8px;padding:0 10px;font-size:13px">'+
-    '</div>'+
-    '<div class="field">'+
-      '<label>Token do Bot</label>'+
-      '<input type="password" value="'+escHtml(cfg.telegram.botToken)+'" onchange="setNotifValue(\'telegram\',\'botToken\',this.value)" placeholder="123456:ABCdef..." style="width:100%;height:36px;border:1px solid var(--line);border-radius:8px;padding:0 10px;font-size:13px">'+
-    '</div>'+
-  '</div>';
-
-  html += '</div>';
-  html += '<div style="margin-top:20px"><button onclick="testNotifications()" class="add-btn" style="background:var(--accent);color:var(--green-deep);font-weight:600">Testar notificações</button></div>';
-
-  el.innerHTML = html;
-}
 
 function toggleNotifChannel(canal, enabled) {
   var cfg = getNotifCfg();
@@ -6540,76 +6478,97 @@ setInterval(function(){ if (typeof checkAndNotify === 'function') checkAndNotify
 
 
 // Renderiza painel de regras de alerta
+
+
+// Renderiza histórico de notificações
+
+
+
+
+// ═══════════════════════════════════════════════════════
+// NOTIFICAÇÕES - Versão corrigida
+// ═══════════════════════════════════════════════════════
+
+function renderNotificacoes() {
+  var el = document.getElementById('notif-config-panel');
+  if (!el) return;
+  var cfg = getNotifCfg();
+
+  var html = '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px">';
+
+  // WhatsApp
+  html += '<div style="background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:14px">';
+  html += '<div style="font-size:14px;font-weight:600;margin-bottom:10px">WhatsApp 📱</div>';
+  html += '<label style="display:flex;gap:8px;align-items:center;margin-bottom:8px;cursor:pointer">';
+  html += '<input type="checkbox" '+(cfg.whatsapp.enabled?'checked':'')+' onchange="var cfg=getNotifCfg();cfg.whatsapp.enabled=this.checked;saveNotifCfg(cfg);renderNotificacoes()" style="cursor:pointer">';
+  html += '<span>Ativado</span></label>';
+  html += '<div style="margin-bottom:8px"><label style="font-size:11px;color:var(--ink3)">Número</label><input type="text" value="'+(cfg.whatsapp.phoneNumber||'')+'" onchange="var cfg=getNotifCfg();cfg.whatsapp.phoneNumber=this.value;saveNotifCfg(cfg);" placeholder="5585987654321" style="height:32px;width:100%;border:1px solid var(--line);border-radius:8px;padding:0 8px;font-size:12px;box-sizing:border-box"></div>';
+  html += '<div><label style="font-size:11px;color:var(--ink3)">API Key (Twilio)</label><input type="password" value="'+(cfg.whatsapp.apiKey||'')+'" onchange="var cfg=getNotifCfg();cfg.whatsapp.apiKey=this.value;saveNotifCfg(cfg);" placeholder="sk_..." style="height:32px;width:100%;border:1px solid var(--line);border-radius:8px;padding:0 8px;font-size:12px;box-sizing:border-box"></div>';
+  html += '</div>';
+
+  // Email
+  html += '<div style="background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:14px">';
+  html += '<div style="font-size:14px;font-weight:600;margin-bottom:10px">Email 📧</div>';
+  html += '<label style="display:flex;gap:8px;align-items:center;margin-bottom:8px;cursor:pointer">';
+  html += '<input type="checkbox" '+(cfg.email.enabled?'checked':'')+' onchange="var cfg=getNotifCfg();cfg.email.enabled=this.checked;saveNotifCfg(cfg);renderNotificacoes()" style="cursor:pointer">';
+  html += '<span>Ativado</span></label>';
+  html += '<div><label style="font-size:11px;color:var(--ink3)">Para qual email</label><input type="email" value="'+(cfg.email.to||'')+'" onchange="var cfg=getNotifCfg();cfg.email.to=this.value;saveNotifCfg(cfg);" placeholder="seu@email.com" style="height:32px;width:100%;border:1px solid var(--line);border-radius:8px;padding:0 8px;font-size:12px;box-sizing:border-box"></div>';
+  html += '</div>';
+
+  // Telegram
+  html += '<div style="background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:14px">';
+  html += '<div style="font-size:14px;font-weight:600;margin-bottom:10px">Telegram ✈️</div>';
+  html += '<label style="display:flex;gap:8px;align-items:center;margin-bottom:8px;cursor:pointer">';
+  html += '<input type="checkbox" '+(cfg.telegram.enabled?'checked':'')+' onchange="var cfg=getNotifCfg();cfg.telegram.enabled=this.checked;saveNotifCfg(cfg);renderNotificacoes()" style="cursor:pointer">';
+  html += '<span>Ativado</span></label>';
+  html += '<div style="margin-bottom:8px"><label style="font-size:11px;color:var(--ink3)">Chat ID</label><input type="text" value="'+(cfg.telegram.chatId||'')+'" onchange="var cfg=getNotifCfg();cfg.telegram.chatId=this.value;saveNotifCfg(cfg);" placeholder="123456789" style="height:32px;width:100%;border:1px solid var(--line);border-radius:8px;padding:0 8px;font-size:12px;box-sizing:border-box"></div>';
+  html += '<div><label style="font-size:11px;color:var(--ink3)">Bot Token</label><input type="password" value="'+(cfg.telegram.botToken||'')+'" onchange="var cfg=getNotifCfg();cfg.telegram.botToken=this.value;saveNotifCfg(cfg);" placeholder="123456:ABCdef..." style="height:32px;width:100%;border:1px solid var(--line);border-radius:8px;padding:0 8px;font-size:12px;box-sizing:border-box"></div>';
+  html += '</div>';
+
+  html += '</div>';
+  html += '<div style="margin-top:16px"><button onclick="testNotifications()" style="background:var(--accent);color:var(--green-deep);border:none;border-radius:8px;padding:10px 20px;cursor:pointer;font-weight:600;font-family:inherit">Testar notificações</button></div>';
+  
+  el.innerHTML = html;
+}
+
 function renderNotifRules() {
   var el = document.getElementById('notif-rules-panel');
   if (!el) return;
   var cfg = getNotifCfg();
-  if (!cfg || !cfg.rules) { el.innerHTML = '<p style="color:var(--ink3)">Erro ao carregar configurações</p>'; return; }
-  
-  var html = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">';
-  
-  // Estoque mínimo
-  html += '<div class="field" style="background:var(--bg2);padding:12px;border-radius:10px;border:1px solid var(--line)">'+
-    '<label style="display:flex;gap:8px;align-items:center;cursor:pointer;margin-bottom:8px">'+
-      '<input type="checkbox" '+(cfg.rules.estoqueMinimo.enabled?'checked':'')+' onchange="var cfg=getNotifCfg(); cfg.rules.estoqueMinimo.enabled=this.checked; saveNotifCfg(cfg); renderNotifRules();" style="cursor:pointer">'+
-      '<span style="font-weight:500">Estoque mínimo</span>'+
-    '</label>'+
-    '<p style="font-size:11px;color:var(--ink3);margin:0">Avisa quando produto atinge estoque mínimo</p>'+
-  '</div>';
-  
-  // Boleto vencendo
-  html += '<div class="field" style="background:var(--bg2);padding:12px;border-radius:10px;border:1px solid var(--line)">'+
-    '<label style="display:flex;gap:8px;align-items:center;cursor:pointer;margin-bottom:8px">'+
-      '<input type="checkbox" '+(cfg.rules.boletoVencendo.enabled?'checked':'')+' onchange="var cfg=getNotifCfg(); cfg.rules.boletoVencendo.enabled=this.checked; saveNotifCfg(cfg); renderNotifRules();" style="cursor:pointer">'+
-      '<span style="font-weight:500">Boleto vencendo</span>'+
-    '</label>'+
-    '<p style="font-size:11px;color:var(--ink3);margin:0">Avisa 3 dias antes do vencimento</p>'+
-  '</div>';
-  
-  // Margem baixa
-  html += '<div class="field" style="background:var(--bg2);padding:12px;border-radius:10px;border:1px solid var(--line)">'+
-    '<label style="display:flex;gap:8px;align-items:center;cursor:pointer;margin-bottom:8px">'+
-      '<input type="checkbox" '+(cfg.rules.margemBaixa.enabled?'checked':'')+' onchange="var cfg=getNotifCfg(); cfg.rules.margemBaixa.enabled=this.checked; saveNotifCfg(cfg); renderNotifRules();" style="cursor:pointer">'+
-      '<span style="font-weight:500">Margem baixa</span>'+
-    '</label>'+
-    '<div style="font-size:11px;margin-top:6px">Limite (%): <input type="number" value="'+(cfg.rules.margemBaixa.limitePercentual||20)+'" onchange="var cfg=getNotifCfg(); cfg.rules.margemBaixa.limitePercentual=parseInt(this.value)||20; saveNotifCfg(cfg);" style="height:28px;width:60px;border:1px solid var(--line);border-radius:6px;padding:0 6px"></div>'+
-  '</div>';
-  
-  // Quebras excessivas
-  html += '<div class="field" style="background:var(--bg2);padding:12px;border-radius:10px;border:1px solid var(--line)">'+
-    '<label style="display:flex;gap:8px;align-items:center;cursor:pointer;margin-bottom:8px">'+
-      '<input type="checkbox" '+(cfg.rules.quebrasExcessivas.enabled?'checked':'')+' onchange="var cfg=getNotifCfg(); cfg.rules.quebrasExcessivas.enabled=this.checked; saveNotifCfg(cfg); renderNotifRules();" style="cursor:pointer">'+
-      '<span style="font-weight:500">Quebras excessivas</span>'+
-    '</label>'+
-    '<div style="font-size:11px;margin-top:6px">Limite (R$): <input type="number" value="'+(cfg.rules.quebrasExcessivas.limiteValor||500)+'" onchange="var cfg=getNotifCfg(); cfg.rules.quebrasExcessivas.limiteValor=parseFloat(this.value)||500; saveNotifCfg(cfg);" style="height:28px;width:80px;border:1px solid var(--line);border-radius:6px;padding:0 6px"></div>'+
-  '</div>';
-  
+
+  var html = '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px">';
+
+  html += '<div style="background:var(--bg2);padding:12px;border-radius:10px;border:1px solid var(--line)">';
+  html += '<label style="display:flex;gap:8px;cursor:pointer"><input type="checkbox" '+(cfg.rules.estoqueMinimo.enabled?'checked':'')+' onchange="var cfg=getNotifCfg();cfg.rules.estoqueMinimo.enabled=this.checked;saveNotifCfg(cfg);renderNotifRules()" style="cursor:pointer"><span style="font-weight:500">Estoque mínimo</span></label>';
+  html += '<p style="font-size:11px;color:var(--ink3);margin:4px 0 0">Avisa quando estoque atinge mínimo</p>';
+  html += '</div>';
+
+  html += '<div style="background:var(--bg2);padding:12px;border-radius:10px;border:1px solid var(--line)">';
+  html += '<label style="display:flex;gap:8px;cursor:pointer"><input type="checkbox" '+(cfg.rules.boletoVencendo.enabled?'checked':'')+' onchange="var cfg=getNotifCfg();cfg.rules.boletoVencendo.enabled=this.checked;saveNotifCfg(cfg);renderNotifRules()" style="cursor:pointer"><span style="font-weight:500">Boleto vencendo</span></label>';
+  html += '<p style="font-size:11px;color:var(--ink3);margin:4px 0 0">Avisa 3 dias antes</p>';
+  html += '</div>';
+
+  html += '<div style="background:var(--bg2);padding:12px;border-radius:10px;border:1px solid var(--line)">';
+  html += '<label style="display:flex;gap:8px;align-items:center;cursor:pointer"><input type="checkbox" '+(cfg.rules.margemBaixa.enabled?'checked':'')+' onchange="var cfg=getNotifCfg();cfg.rules.margemBaixa.enabled=this.checked;saveNotifCfg(cfg);renderNotifRules()" style="cursor:pointer"><span style="font-weight:500">Margem < </span><input type="number" value="'+(cfg.rules.margemBaixa.limitePercentual||20)+'" onchange="var cfg=getNotifCfg();cfg.rules.margemBaixa.limitePercentual=parseInt(this.value);saveNotifCfg(cfg);" style="height:24px;width:40px;border:1px solid var(--line);border-radius:4px;padding:0 4px;font-size:11px">%</label>';
+  html += '</div>';
+
+  html += '<div style="background:var(--bg2);padding:12px;border-radius:10px;border:1px solid var(--line)">';
+  html += '<label style="display:flex;gap:8px;align-items:center;cursor:pointer"><input type="checkbox" '+(cfg.rules.quebrasExcessivas.enabled?'checked':'')+' onchange="var cfg=getNotifCfg();cfg.rules.quebrasExcessivas.enabled=this.checked;saveNotifCfg(cfg);renderNotifRules()" style="cursor:pointer"><span style="font-weight:500">Quebras > R$</span><input type="number" value="'+(cfg.rules.quebrasExcessivas.limiteValor||500)+'" onchange="var cfg=getNotifCfg();cfg.rules.quebrasExcessivas.limiteValor=parseFloat(this.value);saveNotifCfg(cfg);" style="height:24px;width:50px;border:1px solid var(--line);border-radius:4px;padding:0 4px;font-size:11px"></label>';
+  html += '</div>';
+
   html += '</div>';
   el.innerHTML = html;
 }
 
-// Renderiza histórico de notificações
 function renderNotifLog() {
   var el = document.getElementById('notif-log-panel');
   if (!el) return;
-  
-  var log = getNotifLog();
-  if (log.length === 0) {
-    el.innerHTML = '<p style="font-size:12px;color:var(--ink3)">Nenhuma notificação enviada ainda. Elas aparecerão aqui quando forem disparadas.</p>';
-    return;
-  }
-  
-  var html = '<table style="width:100%;font-size:11px;border-collapse:collapse">';
-  html += '<tr style="border-bottom:1px solid var(--line)"><th style="text-align:left;padding:6px">Hora</th><th style="text-align:left;padding:6px">Tipo</th><th style="text-align:left;padding:6px">Canal</th><th style="text-align:left;padding:6px">Status</th></tr>';
-  
-  log.slice(-20).reverse().forEach(function(item){
-    html += '<tr style="border-bottom:1px solid var(--line)"><td style="padding:6px">'+escHtml(item.timestamp||'')+'</td><td style="padding:6px">'+escHtml(item.tipo||'')+'</td><td style="padding:6px">'+escHtml(item.destinatario||'-')+'</td><td style="padding:6px">'+(item.status==='ok'?'✓ Enviado':'✗ Erro')+'</td></tr>';
-  });
-  
-  html += '</table>';
-  el.innerHTML = html;
+  el.innerHTML = '<p style="color:var(--ink3)">Histórico vazio. Notificações aparecerão aqui.</p>';
 }
 
+function testNotifications() {
+  alert("Teste: Mensagens serão enviadas para os canais ativados (WhatsApp/Email/Telegram)");
+}
 </script>
 
 </body>
